@@ -97,6 +97,7 @@ class KeyValue implements Xml\Element
      */
     public static function xmlDeserialize(Xml\Reader $reader)
     {
+        require_once __DIR__ . '/../Deserializer/functions.php';
         return Deserializer\keyValue($reader);
     }
 }
