@@ -283,7 +283,7 @@ XML;
 XML;
 
         $ns = 'http://sabredav.org/ns';
-        $orderService = new \Sabre\Xml\Service();
+        $orderService = new Service();
         $orderService->mapValueObject('{'.$ns.'}order', 'Sabre\Xml\Order');
         $orderService->mapValueObject('{'.$ns.'}status', 'Sabre\Xml\OrderStatus');
         $orderService->namespaceMap[$ns] = null;
@@ -323,7 +323,7 @@ XML;
 XML;
 
         $ns = 'http://sabredav.org/ns';
-        $orderService = new \Sabre\Xml\Service();
+        $orderService = new Service();
         $orderService->mapValueObject('{'.$ns.'}order', 'Sabre\Xml\Order');
         $orderService->mapValueObject('{'.$ns.'}status', 'Sabre\Xml\OrderStatus');
         $orderService->namespaceMap[$ns] = null;
@@ -352,18 +352,31 @@ XML;
         $service->writeValueObject(new \stdClass());
     }
 
-    public function testParseClarkNotation(): void
+    /**
+     * @param array<string> $expected
+     *
+     * @dataProvider provideParseClarkNotationInput
+     */
+    public function testParseClarkNotation(string $clark, array $expected): void
     {
-        self::assertEquals([
-            'http://sabredav.org/ns',
-            'elem',
-        ], Service::parseClarkNotation('{http://sabredav.org/ns}elem'));
+        self::assertEquals($expected, Service::parseClarkNotation($clark));
     }
 
     public function testParseClarkNotationFail(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         Service::parseClarkNotation('http://sabredav.org/ns}elem');
+    }
+
+    /**
+     * @return array<int, list{string, array<string>}>
+     */
+    public function provideParseClarkNotationInput(): iterable
+    {
+        return [
+            ['{http://sabredav.org/ns}elem', ['http://sabredav.org/ns', 'elem']],
+            ['{}elem', ['', 'elem']],
+        ];
     }
 
     /**
