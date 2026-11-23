@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Sabre\Xml;
 
+use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\TestCase;
 
 class WriterTest extends TestCase
@@ -42,9 +43,7 @@ HI
         );
     }
 
-    /**
-     * @depends testSimple
-     */
+    #[Depends('testSimple')]
     public function testSimpleQuotes(): void
     {
         $this->compare([
@@ -177,9 +176,7 @@ HI
         );
     }
 
-    /**
-     * @depends testArrayFormat2
-     */
+    #[Depends('testArrayFormat2')]
     public function testArrayFormat2NoValue(): void
     {
         $this->compare([
@@ -365,7 +362,7 @@ HI;
     public function testCallback(): void
     {
         $this->compare([
-            '{http://sabredav.org/ns}root' => function (Writer $writer) {
+            '{http://sabredav.org/ns}root' => function (Writer $writer): void {
                 $writer->text('deferred writer');
             },
         ], <<<HI
@@ -396,7 +393,7 @@ HI
             'key2' => 'value2',
         ];
 
-        $this->writer->classMap['stdClass'] = function (Writer $writer, $value) {
+        $this->writer->classMap['stdClass'] = function (Writer $writer, $value): void {
             foreach (get_object_vars($value) as $key => $val) {
                 $writer->writeElement('{http://sabredav.org/ns}'.$key, $val);
             }

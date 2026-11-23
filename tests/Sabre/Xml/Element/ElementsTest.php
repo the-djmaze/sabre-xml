@@ -34,9 +34,9 @@ BLA;
 
         $reader = new Reader();
         $reader->elementMap = [
-            '{http://sabredav.org/ns}listThingy' => 'Sabre\\Xml\\Element\\Elements',
+            '{http://sabredav.org/ns}listThingy' => Elements::class,
         ];
-        $reader->xml($input);
+        $reader->XML($input);
 
         $output = $reader->parse();
 

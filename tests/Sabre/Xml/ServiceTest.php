@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Sabre\Xml;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\TestCase;
 use Sabre\Xml\Element\KeyValue;
 
@@ -21,7 +23,6 @@ class ServiceTest extends TestCase
         $util->elementMap = $elems;
 
         $reader = $util->getReader();
-        self::assertInstanceOf('Sabre\\Xml\\Reader', $reader);
         self::assertEquals($elems, $reader->elementMap);
     }
 
@@ -35,27 +36,23 @@ class ServiceTest extends TestCase
         $util->namespaceMap = $ns;
 
         $writer = $util->getWriter();
-        self::assertInstanceOf('Sabre\\Xml\\Writer', $writer);
         self::assertEquals($ns, $writer->namespaceMap);
     }
 
     /**
-     * @dataProvider providesEmptyInput
-     *
      * @param string|resource $input
      */
+    #[DataProvider('providesEmptyInput')]
     public function testEmptyInputParse($input): void
     {
-        $this->expectException('\Sabre\Xml\ParseException');
+        $this->expectException(ParseException::class);
         $this->expectExceptionMessage('The input element to parse is empty. Do not attempt to parse');
 
         $util = new Service();
         $util->parse($input, '/sabre.io/ns');
     }
 
-    /**
-     * @depends testGetReader
-     */
+    #[Depends('testGetReader')]
     public function testParse(): void
     {
         $xml = <<<XML
@@ -81,9 +78,7 @@ XML;
         );
     }
 
-    /**
-     * @depends testGetReader
-     */
+    #[Depends('testGetReader')]
     public function testParseStream(): void
     {
         $xml = <<<XML
@@ -115,22 +110,19 @@ XML;
     }
 
     /**
-     * @dataProvider providesEmptyInput
-     *
      * @param string|resource $input
      */
+    #[DataProvider('providesEmptyInput')]
     public function testEmptyInputExpect($input): void
     {
-        $this->expectException('\Sabre\Xml\ParseException');
+        $this->expectException(ParseException::class);
         $this->expectExceptionMessage('The input element to parse is empty. Do not attempt to parse');
 
         $util = new Service();
         $util->expect('foo', $input, '/sabre.io/ns');
     }
 
-    /**
-     * @depends testGetReader
-     */
+    #[Depends('testGetReader')]
     public function testExpect(): void
     {
         $xml = <<<XML
@@ -170,9 +162,7 @@ XML;
         $result = $util->expect('{DAV:}propfind', $xml);
     }
 
-    /**
-     * @dataProvider providesEmptyPropfinds
-     */
+    #[DataProvider('providesEmptyPropfinds')]
     public function testEmptyPropfind(string $xml): void
     {
         $util = new Service();
@@ -182,9 +172,6 @@ XML;
         $util->namespaceMap = [
             'http://sabre.io/ns' => 'stdClass',
         ];
-        /**
-         * @var PropFindTestAsset
-         */
         $result = $util->expect('{DAV:}propfind', $xml);
         self::assertIsObject($result);
         self::assertInstanceOf(PropFindTestAsset::class, $result);
@@ -192,9 +179,7 @@ XML;
         self::assertEquals([], $result->properties);
     }
 
-    /**
-     * @depends testGetReader
-     */
+    #[Depends('testGetReader')]
     public function testExpectStream(): void
     {
         $xml = <<<XML
@@ -225,9 +210,7 @@ XML;
         );
     }
 
-    /**
-     * @depends testGetReader
-     */
+    #[Depends('testGetReader')]
     public function testExpectWrong(): void
     {
         $this->expectException(ParseException::class);
@@ -240,9 +223,7 @@ XML;
         $util->expect('{http://sabre.io/ns}error', $xml);
     }
 
-    /**
-     * @depends testGetWriter
-     */
+    #[Depends('testGetWriter')]
     public function testWrite(): void
     {
         $util = new Service();
@@ -284,8 +265,8 @@ XML;
 
         $ns = 'http://sabredav.org/ns';
         $orderService = new Service();
-        $orderService->mapValueObject('{'.$ns.'}order', 'Sabre\Xml\Order');
-        $orderService->mapValueObject('{'.$ns.'}status', 'Sabre\Xml\OrderStatus');
+        $orderService->mapValueObject('{'.$ns.'}order', Order::class);
+        $orderService->mapValueObject('{'.$ns.'}status', OrderStatus::class);
         $orderService->namespaceMap[$ns] = null;
 
         $order = $orderService->parse($input);
@@ -324,8 +305,8 @@ XML;
 
         $ns = 'http://sabredav.org/ns';
         $orderService = new Service();
-        $orderService->mapValueObject('{'.$ns.'}order', 'Sabre\Xml\Order');
-        $orderService->mapValueObject('{'.$ns.'}status', 'Sabre\Xml\OrderStatus');
+        $orderService->mapValueObject('{'.$ns.'}order', Order::class);
+        $orderService->mapValueObject('{'.$ns.'}status', OrderStatus::class);
         $orderService->namespaceMap[$ns] = null;
 
         $order = $orderService->parse($input);
@@ -354,9 +335,8 @@ XML;
 
     /**
      * @param array<string> $expected
-     *
-     * @dataProvider provideParseClarkNotationInput
      */
+    #[DataProvider('provideParseClarkNotationInput')]
     public function testParseClarkNotation(string $clark, array $expected): void
     {
         self::assertEquals($expected, Service::parseClarkNotation($clark));
@@ -371,7 +351,7 @@ XML;
     /**
      * @return array<int, list{string, array<string>}>
      */
-    public function provideParseClarkNotationInput(): iterable
+    public static function provideParseClarkNotationInput(): iterable
     {
         return [
             ['{http://sabredav.org/ns}elem', ['http://sabredav.org/ns', 'elem']],
@@ -382,9 +362,10 @@ XML;
     /**
      * @return array<int, array<int, string|resource|false>>
      */
-    public function providesEmptyInput(): array
+    public static function providesEmptyInput(): array
     {
         $emptyResource = fopen('php://input', 'r');
+        $data = [];
         $data[] = [$emptyResource];
         $data[] = [''];
 
@@ -407,7 +388,7 @@ XML;
     /**
      * @return array<int, array<int, string>>
      */
-    public function providesEmptyPropfinds(): array
+    public static function providesEmptyPropfinds(): array
     {
         return [
             ['<D:propfind xmlns:D="DAV:"><D:prop></D:prop></D:propfind>'],
@@ -480,7 +461,7 @@ class PropFindTestAsset implements XmlDeserializable
         $self = new self();
 
         $reader->pushContext();
-        $reader->elementMap['{DAV:}prop'] = 'Sabre\Xml\Element\Elements';
+        $reader->elementMap['{DAV:}prop'] = Element\Elements::class;
 
         foreach (KeyValue::xmlDeserialize($reader) as $k => $v) {
             switch ($k) {

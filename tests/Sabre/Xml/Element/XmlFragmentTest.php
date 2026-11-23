@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace Sabre\Xml\Element;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Sabre\Xml\Reader;
 use Sabre\Xml\Writer;
 
 class XmlFragmentTest extends TestCase
 {
-    /**
-     * @dataProvider xmlProvider
-     */
+    #[DataProvider('xmlProvider')]
     public function testDeserialize(string $input, string $expected): void
     {
         $input = <<<BLA
@@ -24,9 +23,9 @@ BLA;
 
         $reader = new Reader();
         $reader->elementMap = [
-            '{http://sabredav.org/ns}fragment' => 'Sabre\\Xml\\Element\\XmlFragment',
+            '{http://sabredav.org/ns}fragment' => XmlFragment::class,
         ];
-        $reader->xml($input);
+        $reader->XML($input);
 
         $output = $reader->parse();
 
@@ -56,7 +55,7 @@ BLA;
      *
      * @return array<int, array<int, string>>
      */
-    public function xmlProvider(): array
+    public static function xmlProvider(): array
     {
         return [
             [
@@ -108,14 +107,10 @@ BLA;
         ];
     }
 
-    /**
-     * @dataProvider xmlProvider
-     */
+    #[DataProvider('xmlProvider')]
     public function testSerialize(string $expectedFallback, string $input, ?string $expected = null): void
     {
-        if (is_null($expected)) {
-            $expected = $expectedFallback;
-        }
+        $expected ??= $expectedFallback;
 
         $writer = new Writer();
         $writer->namespaceMap = [

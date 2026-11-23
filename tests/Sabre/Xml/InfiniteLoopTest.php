@@ -22,9 +22,9 @@ class InfiniteLoopTest extends TestCase
 
         $reader = new Reader();
         $reader->elementMap = [
-            '{DAV:}set' => 'Sabre\\Xml\\Element\\KeyValue',
+            '{DAV:}set' => Element\KeyValue::class,
         ];
-        $reader->xml($body);
+        $reader->XML($body);
 
         $output = $reader->parse();
 
