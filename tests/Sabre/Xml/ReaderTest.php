@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Sabre\Xml;
 
+use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\TestCase;
 
 class ReaderTest extends TestCase
@@ -15,7 +17,7 @@ class ReaderTest extends TestCase
 <root xmlns="http://sabredav.org/ns" />
 BLA;
         $reader = new Reader();
-        $reader->xml($input);
+        $reader->XML($input);
 
         $reader->next();
 
@@ -29,7 +31,7 @@ BLA;
 <root />
 BLA;
         $reader = new Reader();
-        $reader->xml($input);
+        $reader->XML($input);
 
         $reader->next();
 
@@ -43,7 +45,7 @@ BLA;
 <root />
 BLA;
         $reader = new Reader();
-        $reader->xml($input);
+        $reader->XML($input);
 
         self::assertNull($reader->getClark());
     }
@@ -61,7 +63,7 @@ BLA;
 BLA;
 
         $reader = new Reader();
-        $reader->xml($input);
+        $reader->XML($input);
 
         $output = $reader->parse();
 
@@ -103,7 +105,7 @@ BLA;
 BLA;
 
         $reader = new Reader();
-        $reader->xml($input);
+        $reader->XML($input);
 
         $output = $reader->parse();
 
@@ -132,7 +134,7 @@ BLA;
 BLA;
 
         $reader = new Reader();
-        $reader->xml($input);
+        $reader->XML($input);
 
         $output = $reader->parse();
 
@@ -164,9 +166,9 @@ BLA;
 
         $reader = new Reader();
         $reader->elementMap = [
-            '{http://sabredav.org/ns}elem1' => 'Sabre\\Xml\\Element\\Mock',
+            '{http://sabredav.org/ns}elem1' => Element\Mock::class,
         ];
-        $reader->xml($input);
+        $reader->XML($input);
 
         $output = $reader->parse();
 
@@ -199,14 +201,12 @@ BLA;
         $reader->elementMap = [
             '{http://sabredav.org/ns}elem1' => new \stdClass(),
         ];
-        $reader->xml($input);
+        $reader->XML($input);
 
         $reader->parse();
     }
 
-    /**
-     * @depends testMappedElement
-     */
+    #[Depends('testMappedElement')]
     public function testMappedElementCallBack(): void
     {
         $input = <<<BLA
@@ -224,7 +224,7 @@ BLA;
                 return 'foobar';
             },
         ];
-        $reader->xml($input);
+        $reader->XML($input);
 
         $output = $reader->parse();
 
@@ -243,9 +243,7 @@ BLA;
         self::assertEquals($expected, $output);
     }
 
-    /**
-     * @depends testMappedElementCallBack
-     */
+    #[Depends('testMappedElementCallBack')]
     public function testMappedElementCallBackNoNamespace(): void
     {
         $input = <<<BLA
@@ -263,7 +261,7 @@ BLA;
                 return 'foobar';
             },
         ];
-        $reader->xml($input);
+        $reader->XML($input);
 
         $output = $reader->parse();
 
@@ -282,9 +280,7 @@ BLA;
         self::assertEquals($expected, $output);
     }
 
-    /**
-     * @depends testMappedElementCallBack
-     */
+    #[Depends('testMappedElementCallBack')]
     public function testReadText(): void
     {
         $input = <<<BLA
@@ -299,11 +295,9 @@ BLA;
 
         $reader = new Reader();
         $reader->elementMap = [
-            '{http://sabredav.org/ns}elem1' => function (Reader $reader) {
-                return $reader->readText();
-            },
+            '{http://sabredav.org/ns}elem1' => fn (Reader $reader) => $reader->readText(),
         ];
-        $reader->xml($input);
+        $reader->XML($input);
 
         $output = $reader->parse();
 
@@ -331,15 +325,15 @@ BLA;
 
         $reader = new Reader();
         $reader->elementMap = [
-            '{http://sabredav.org/ns}elem1' => 'Sabre\\Xml\\Element\\Mock',
+            '{http://sabredav.org/ns}elem1' => Element\Mock::class,
         ];
-        $reader->xml($input);
+        $reader->XML($input);
 
         try {
             $output = $reader->parse();
-            $this->fail('We expected a ParseException to be thrown');
+            Assert::fail('We expected a ParseException to be thrown');
         } catch (LibXMLException $e) {
-            self::assertIsArray($e->getErrors());
+            self::assertNotEmpty($e->getErrors());
         }
     }
 
@@ -355,9 +349,9 @@ BLA;
 
         $reader = new Reader();
         $reader->elementMap = [
-            '{http://sabredav.org/ns}elem1' => 'Sabre\\Xml\\Element\\Eater',
+            '{http://sabredav.org/ns}elem1' => Element\Eater::class,
         ];
-        $reader->xml($input);
+        $reader->XML($input);
         $reader->parse();
     }
 
@@ -375,7 +369,7 @@ BLA;
 BLA;
 
         $reader = new Reader();
-        $reader->xml($input);
+        $reader->XML($input);
         $reader->parse();
     }
 
@@ -399,13 +393,11 @@ BLA;
                 </lan
 XML;
         $reader = new Reader();
-        $reader->xml($input);
+        $reader->XML($input);
         $reader->parse();
     }
 
-    /**
-     * @depends testMappedElement
-     */
+    #[Depends('testMappedElement')]
     public function testParseInnerTree(): void
     {
         $input = <<<BLA
@@ -429,7 +421,7 @@ BLA;
                 return $innerTree;
             },
         ];
-        $reader->xml($input);
+        $reader->XML($input);
 
         $output = $reader->parse();
 
@@ -454,9 +446,7 @@ BLA;
         self::assertEquals($expected, $output);
     }
 
-    /**
-     * @depends testParseInnerTree
-     */
+    #[Depends('testParseInnerTree')]
     public function testParseGetElements(): void
     {
         $input = <<<BLA
@@ -480,7 +470,7 @@ BLA;
                 return $innerTree;
             },
         ];
-        $reader->xml($input);
+        $reader->XML($input);
 
         $output = $reader->parse();
 
@@ -505,9 +495,7 @@ BLA;
         self::assertEquals($expected, $output);
     }
 
-    /**
-     * @depends testParseInnerTree
-     */
+    #[Depends('testParseInnerTree')]
     public function testParseGetElementsNoElements(): void
     {
         $input = <<<BLA
@@ -531,7 +519,7 @@ BLA;
                 return $innerTree;
             },
         ];
-        $reader->xml($input);
+        $reader->XML($input);
 
         $output = $reader->parse();
 

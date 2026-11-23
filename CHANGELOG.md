@@ -1,6 +1,28 @@
 ChangeLog
 =========
 
+4.1.0 (2026-04-27)
+------------------
+* #325 chore: support PHP 8.2 and up ( @phil-davis )
+* *326 chore: remove phpVersion from phpstan.neon ( @phil-davis )
+
+4.0.7 (2026-04-02)
+------------------
+* #305 phpstan major version 2 ( @phil-davis )
+* *317 add rector and run in CI ( @phil-davis )
+
+4.0.6 (2024-09-06)
+------------------
+* #281 delete unused bin directory ( @szepeviktor )
+* #282 stop exporting php-cs-fixer config ( @szepeviktor )
+* #298 fix for passing a closed resource to Service parse or expect (@phil-davis)
+
+4.0.5 (2024-04-18)
+------------------
+* #270 Fixed handling of elements from foreign namespaces in values object ( @mrbig )
+* #271 Code format changes for php-cs-fixer 3.51 ( @phil-davis )
+* #272 More precise parseClarkNotation return type ( @staabm )
+
 4.0.4 (2023-11-09)
 ------------------
 * #260 fix: more return type declarations on xmlDeserialize ( @DeepDiver1975 )
@@ -24,6 +46,28 @@ ChangeLog
 ------------------
 * #226 Allow sabre/uri major version 3 ( @phil-davis )
 
+3.0.7 (2026-04-02)
+------------------
+* #318 phpstan major version 2 (@phil-davis)
+* *320 add rector and run in CI (@phil-davis)
+
+3.0.6 (2024-09-06)
+------------------
+* #298 fix for passing a closed resource to Service parse or expect (@phil-davis)
+
+3.0.5 (2024-09-05)
+------------------
+* #294 Add PHP 8.4 compliance for v3 branch ( @phil-davis )
+
+3.0.4 (2024-04-18)
+------------------
+* #270 Fixed handling of elements from foreign namespaces in values object ( @mrbig )
+* #272 More precise parseClarkNotation return type ( @staabm )
+
+3.0.3 (2023-11-09)
+------------------
+* #262 Backport fix: return type of XmlFragment::xmlDeserialize to match base declaration ( @phil-davis )
+
 3.0.2 (2023-06-28)
 ------------------
 * #247 Enhance PHPdoc of Service write value parameter ( @phil-davis )
@@ -40,6 +84,27 @@ ChangeLog
 * #217 Declare types ( @staabm )
 * #213 added phpstan types to deserializer functions ( @staabm )
 * #214 update phpstan 1.x ( @staabm )
+
+2.2.11 (2024-09-06)
+------------------
+* #298 fix for passing a closed resource to Service parse or expect (@phil-davis)
+
+2.2.10 (2024-08-27)
+------------------
+* #290 add cs-fixer v3 (@phil-davis)
+
+2.2.9 (2024-07-26)
+------------------
+* #287 Explicitly mark nullable parameter (@cedric-anne)
+
+2.2.8 (2024-07-25)
+------------------
+* #284 Add PHP 8.2 and 8.3 to CI for 2.2 branch (@phil-davis)
+* #285 PHP 8.4 compliance (@phil-davis)
+
+2.2.7 (2024-04-18)
+------------------
+* #270 Fixed handling of elements from foreign namespaces in values object ( @mrbig )
 
 2.2.6 (2023-06-28)
 ------------------

@@ -33,9 +33,9 @@ BLA;
 
         $reader = new Reader();
         $reader->elementMap = [
-            '{http://sabredav.org/ns}struct' => 'Sabre\\Xml\\Element\\KeyValue',
+            '{http://sabredav.org/ns}struct' => KeyValue::class,
         ];
-        $reader->xml($input);
+        $reader->XML($input);
 
         $output = $reader->parse();
 
@@ -104,11 +104,11 @@ BLA;
 
         $reader = new Reader();
         $reader->elementMap = [
-            '{DAV:}set' => 'Sabre\\Xml\\Element\\KeyValue',
-            '{DAV:}prop' => 'Sabre\\Xml\\Element\\KeyValue',
-            '{DAV:}resourcetype' => 'Sabre\\Xml\\Element\\Elements',
+            '{DAV:}set' => KeyValue::class,
+            '{DAV:}prop' => KeyValue::class,
+            '{DAV:}resourcetype' => Elements::class,
         ];
-        $reader->xml($input);
+        $reader->XML($input);
 
         $expected = [
             'name' => '{DAV:}mkcol',
@@ -188,9 +188,9 @@ BLA;
 
         $reader = new Reader();
         $reader->elementMap = [
-            '{http://sabredav.org/ns}root' => 'Sabre\\Xml\\Element\\KeyValue',
+            '{http://sabredav.org/ns}root' => KeyValue::class,
         ];
-        $reader->xml($input);
+        $reader->XML($input);
 
         $output = $reader->parse();
 

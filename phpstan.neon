@@ -3,7 +3,10 @@ includes:
 
 parameters:
   level: 8
-  phpVersion: 70430 # PHP 7.4.30
   paths:
     - lib
     - tests
+  ignoreErrors:
+    -
+      rawMessage: 'Dynamic call to static method XMLReader::XML().'
+      identifier: staticMethod.dynamicCall

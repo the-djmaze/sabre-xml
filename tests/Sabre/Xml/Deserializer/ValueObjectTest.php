@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Sabre\Xml\Deserializer;
 
+use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Sabre\Xml\Reader;
 
@@ -20,11 +21,9 @@ class ValueObjectTest extends TestCase
 XML;
 
         $reader = new Reader();
-        $reader->xml($input);
+        $reader->XML($input);
         $reader->elementMap = [
-            '{urn:foo}foo' => function (Reader $reader) {
-                return valueObject($reader, 'Sabre\\Xml\\Deserializer\\TestVo', 'urn:foo');
-            },
+            '{urn:foo}foo' => fn (Reader $reader) => valueObject($reader, TestVo::class, 'urn:foo'),
         ];
 
         $output = $reader->parse();
@@ -57,11 +56,9 @@ XML;
 XML;
 
         $reader = new Reader();
-        $reader->xml($input);
+        $reader->XML($input);
         $reader->elementMap = [
-            '{urn:foo}foo' => function (Reader $reader) {
-                return valueObject($reader, 'Sabre\\Xml\\Deserializer\\TestVo', 'urn:foo');
-            },
+            '{urn:foo}foo' => fn (Reader $reader) => valueObject($reader, TestVo::class, 'urn:foo'),
         ];
 
         $output = $reader->parse();
@@ -82,6 +79,41 @@ XML;
         );
     }
 
+    public function testDeserializeValueObjectIgnoredNamespace(): void
+    {
+        $input = <<<XML
+<?xml version="1.0"?>
+<foo xmlns="urn:foo" xmlns:alien="urn:example.com">
+   <firstName>Harry</firstName>
+   <alien:email>harry@example.org</alien:email>
+   <lastName>Turtle</lastName>
+</foo>
+XML;
+
+        $reader = new Reader();
+        $reader->XML($input);
+        $reader->elementMap = [
+            '{urn:foo}foo' => fn (Reader $reader) => valueObject($reader, TestVo::class, 'urn:foo'),
+        ];
+
+        $output = $reader->parse();
+
+        $vo = new TestVo();
+        $vo->firstName = 'Harry';
+        $vo->lastName = 'Turtle';
+
+        $expected = [
+            'name' => '{urn:foo}foo',
+            'value' => $vo,
+            'attributes' => [],
+        ];
+
+        Assert::assertEquals(
+            $expected,
+            $output
+        );
+    }
+
     public function testDeserializeValueObjectAutoArray(): void
     {
         $input = <<<XML
@@ -95,11 +127,9 @@ XML;
 XML;
 
         $reader = new Reader();
-        $reader->xml($input);
+        $reader->XML($input);
         $reader->elementMap = [
-            '{urn:foo}foo' => function (Reader $reader) {
-                return valueObject($reader, 'Sabre\\Xml\\Deserializer\\TestVo', 'urn:foo');
-            },
+            '{urn:foo}foo' => fn (Reader $reader) => valueObject($reader, TestVo::class, 'urn:foo'),
         ];
 
         $output = $reader->parse();
@@ -132,11 +162,9 @@ XML;
 XML;
 
         $reader = new Reader();
-        $reader->xml($input);
+        $reader->XML($input);
         $reader->elementMap = [
-            '{urn:foo}foo' => function (Reader $reader) {
-                return valueObject($reader, 'Sabre\\Xml\\Deserializer\\TestVo', 'urn:foo');
-            },
+            '{urn:foo}foo' => fn (Reader $reader) => valueObject($reader, TestVo::class, 'urn:foo'),
         ];
 
         $output = $reader->parse();
@@ -165,11 +193,9 @@ XML;
 XML;
 
         $reader = new Reader();
-        $reader->xml($input);
+        $reader->XML($input);
         $reader->elementMap = [
-            '{urn:foo}foo' => function (Reader $reader) {
-                return valueObject($reader, 'Sabre\\Xml\\Deserializer\\TestVo', 'urn:foo');
-            },
+            '{urn:foo}foo' => fn (Reader $reader) => valueObject($reader, TestVo::class, 'urn:foo'),
         ];
 
         $output = $reader->parse();
@@ -182,7 +208,7 @@ XML;
             'attributes' => [],
         ];
 
-        $this->assertEquals(
+        Assert::assertEquals(
             $expected,
             $output['value'][0]
         );
